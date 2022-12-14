@@ -32,6 +32,13 @@ function Gameboard() {
     const [firstClick, setFirstClick] = React.useState(-1)
     const [secondClick, setSecondClick] = React.useState(-1)
 
+    React.useEffect(
+        ()=>{
+            updateBox();
+        },
+        [firstClick, secondClick]
+    )
+
     function boxPicked(pos){
         console.log(pos);
         //need to change show to true in this position of boxes
@@ -53,21 +60,7 @@ function Gameboard() {
             //show it
             temp[pos].show = true;
             setBoxes(temp);
-            //now check for match
-            if (pics[firstClick] === pics[secondClick]){
-                alert("match!")
-                //they stay turned over
-
-                //how to make sure they can't be clicked again?
-                //setFirstClick(-1);
-                //setSecondClick(-1);
-            }
-            else{
-                console.log("no match", firstClick, secondClick);
-                //delay then turn show to false
-                setTimeout(turnOver, 3000);
-
-            }
+            
 
 
         }
@@ -77,14 +70,37 @@ function Gameboard() {
         console.log('turnover', firstClick, secondClick);
         const temp = [...boxes];
         console.log(temp);
-       // temp[firstClick].show = false;
-       // temp[secondClick].show = false;
-       // setBoxes(temp);
-        //setFirstClick(-1);
-        //setSecondClick(-1);
+        temp[firstClick].show = false;
+        temp[secondClick].show = false;
+        setBoxes(temp);
+        setFirstClick(-1);
+        setSecondClick(-1);
     }
 
-    
+    //ISSUE WITH THE TIMING OF STATE CHANGES
+    function updateBox(){
+        //needs to run whenever firstClick or secondClick changes
+        //make sure two boxes have been selected
+        if (secondClick !== -1){
+            //now check for match
+            if (pics[firstClick] === pics[secondClick]){
+                alert("match!")
+                //they stay turned over
+
+                //how to make sure they can't be clicked again?
+                setFirstClick(-1);
+                setSecondClick(-1);
+            }
+            else{
+                console.log("no match", firstClick, secondClick);
+                //delay then turn show to false
+                setTimeout(turnOver, 3000);
+
+            }
+
+        }
+    }
+
   return (
     <div className="gameboard-container">
         {
